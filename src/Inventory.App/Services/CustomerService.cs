@@ -12,7 +12,6 @@
 // ******************************************************************
 #endregion
 
-using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -40,15 +39,6 @@ namespace Inventory.Services
             {
                 return await GetCustomerAsync(dataService, id);
             }
-        }
-        static private async Task<CustomerModel> GetCustomerAsync(IDataService dataService, long id)
-        {
-            var item = await dataService.GetCustomerAsync(id);
-            if (item != null)
-            {
-                return await CreateCustomerModelAsync(item, includeAllFields: true);
-            }
-            return null;
         }
 
         public async Task<IList<CustomerModel>> GetCustomersAsync(DataRequest<Customer> request)
@@ -114,7 +104,7 @@ namespace Inventory.Services
             }
         }
 
-        static public async Task<CustomerModel> CreateCustomerModelAsync(Customer source, bool includeAllFields)
+        public static async Task<CustomerModel> CreateCustomerModelAsync(Customer source, bool includeAllFields)
         {
             var model = new CustomerModel()
             {
@@ -153,6 +143,16 @@ namespace Inventory.Services
                 model.PictureSource = await BitmapTools.LoadBitmapAsync(source.Picture);
             }
             return model;
+        }
+
+        private static async Task<CustomerModel> GetCustomerAsync(IDataService dataService, long id)
+        {
+            var item = await dataService.GetCustomerAsync(id);
+            if (item != null)
+            {
+                return await CreateCustomerModelAsync(item, includeAllFields: true);
+            }
+            return null;
         }
 
         private void UpdateCustomerFromModel(Customer target, CustomerModel source)
